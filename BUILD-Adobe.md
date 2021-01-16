@@ -4,7 +4,8 @@
 
 This repository is a fork of the official [cert-manager.io](https://github.com/jetstack/cert-manager.git) repository.  The changes introduced by Adobe are strictly for building cert-manager with FIPS 140-2 compliant libraries.  They loosely follow the guidance from the BoringSSL fork of golang when compiling with Bazel [here](https://github.com/golang/go/tree/dev.boringcrypto/misc/boring#building-from-bazel).
 
-Unlike the RedHat FIPS-compliant `go-toolset`, compiling cert-manager with BoringSSL means there are no kernel dependencies on FIPS libraries in order to build it.  Thus, it can be compiled using the official Bazel image in a container from any generic build machine.  There's no target for pushing the resulting containers from Bazel, so a separate step in the build process needs to be used to push the resulting images (and remove them from the local Docker daemon).
+
+Unlike the RedHat FIPS-compliant `go-toolset`, compiling cert-manager with BoringSSL means there are no kernel dependencies on FIPS libraries in order to build it.  Thus, it can be compiled using the official Bazel image in a container from any generic build machine.
 
 A quick list of the modifications made are:
 
@@ -19,7 +20,7 @@ Based on the Basel [documentation](https://docs.bazel.build/versions/3.7.0/bazel
 docker run -e DOCKER_REGISTRY=${DOCKER_REGISTRY} -e APP_VERSION=${APP_VERSION} -v $(pwd):/src/workspace -v /tmp/build_output:/tmp/build_output -v /var/run/docker.sock:/var/run/docker.sock -w /src/workspace l.gcr.io/google/bazel:latest --output_user_root=/tmp/build_output run --stamp --platforms=@io_bazel_rules_go//go/toolchain:linux_amd64 //build:server-images
 ```
 
-This will load the resulting images in the build host's Docker daemon.
+This will load the resulting images in the build host's Docker daemon.  There's no build target for pushing the resulting containers from Bazel, so a separate step in the build process needs to be used to push the resulting images (and remove them from the local Docker daemon).
 
 ## Validating the binaries are FIPS-enabled
 
